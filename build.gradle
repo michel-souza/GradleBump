@@ -1,123 +1,39 @@
-plugins {
-  id "java"
-  id "eclipse"
-  id "idea"
-  id "maven-publish"
-  id "org.sonarqube" version "2.0.1"
-}
+apply plugin: 'java'
+apply plugin: 'eclipse'
 
-compileJava.options.encoding = 'UTF-8'
-compileTestJava.options.encoding = 'UTF-8'
-/*
- * Gets the version name from the latest Git tag
- */
-def getVersionName = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'describe', '--tags'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
-}
 
-ext.baseVersion = getVersionName()
-ext.snapshotVersion = true
-
-group = "br.com.sabium"
-version = 2.6.5
 sourceCompatibility = 1.8
-
+version = '1.0.0'
 jar {
     manifest {
-        attributes 'Implementation-Title': 'Biblioteca para internacionalizacao de aplicações',
-                'Implementation-Version': version
+        attributes 'Implementation-Title': 'Gradle Quickstart',
+                   'Implementation-Version': version
     }
 }
 
-def publishUrl = (snapshotVersion ?  "${nexusUrl}/content/repositories/snapshots" : "${nexusUrl}/content/repositories/releases")
-println publishUrl
-
 repositories {
-    maven {
-        url "${nexusUrl}/content/groups/public/"
-    }
     mavenCentral()
-    mavenLocal()
-
 }
 
 dependencies {
-    compile 'commons-collections:commons-collections:3.2',
-            'org.apache.commons:commons-lang3:3.4',
-            'org.apache.httpcomponents:httpclient:4.1.1',
-            'com.google.code.gson:gson:2.3.1',
-            'org.apache.logging.log4j:log4j-api:2.4.1',
-            'org.apache.logging.log4j:log4j-core:2.4.1'
+	compile gradleApi()
+	compile localGroovy()
+	compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '3.2.0.201312181205-r'
+	compile group: 'com.google.guava', name: 'guava', version: '15.0'
+	compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+	compile group: 'com.github.zafarkhaja', name: 'java-semver', version: '0.9.0'
 
-    testCompile 'junit:junit:4.+',
-                'org.mock-server:mockserver-netty:3.9.1'
+    testCompile group: 'junit', name: 'junit', version: '4.+'
 }
 
 test {
     systemProperties 'property': 'value'
-    systemProperty "file.encoding", "utf-8"
-
-    beforeTest {
-        descriptor -> logger.lifecycle("Running test: " + descriptor)
-    }
-
-    forkEvery = 1;
-
-    testLogging {
-        showStandardStreams = true
-    }
-
-    //classpath = project.sourceSets.test.runtimeClasspath + files("${projectDir}/build/resources/main")
 }
 
-//sourceSets {
-//    test {
-//        compileClasspath = files(main.output.resourcesDir, main.output.classesDir, configurations.testCompile)
-//        runtimeClasspath = files(test.output.resourcesDir, test.output.classesDir, main.output.resourcesDir, main.output.classesDir, configurations.testRuntime)
-//    }
-//}
-
-sourceSets {
-  main {
-    output.resourcesDir = "build/classes/main"
-  }
-  test {
-    output.resourcesDir = "build/classes/test"
-  }
-}
-
-publishing {
+uploadArchives {
     repositories {
-        maven {
-          url publishUrl
-          credentials {
-                username nexusUsername
-                password nexusPassword
-            }
-        }
+       flatDir {
+           dirs 'repos'
+       }
     }
-    publications {
-        maven(MavenPublication) {
-            groupId group
-            artifactId 'sabium-i18n'
-            version version
-            from components.java
-        }
-    }
-}
-sonarqube{
-  properties {
-    property "sonar.projectKey","br.com.sabium:sabium-i18n:"+version
-    property "sonar.projectName","Libs ::Sabium i18n-"+version
-    property "sonar.projectVersion", version
-    property "sonar.host.url", "http://sonar.sabium.info:9000/"
-    property "sonar.jdbc.url", "jdbc:postgresql://10.10.10.102:5433/sonarqube"
-    property "sonar.jdbc.username", "sonarqube"
-    property "sonar.jdbc.password", "SonarSabium15+"
-  }
 }
