@@ -1,4 +1,4 @@
-package bump;
+package br.com.sabium;
 
 import org.apache.commons.lang.StringUtils;
 import org.gradle.api.Plugin;

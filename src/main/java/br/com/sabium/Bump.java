@@ -1,4 +1,4 @@
-package bump;
+package br.com.sabium;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

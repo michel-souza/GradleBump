@@ -1,4 +1,4 @@
-package bump;
+package br.com.sabium;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,6 +8,9 @@ import java.io.IOException;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
+
+import br.com.sabium.Bump;
+import br.com.sabium.GitVersion;
 
 public class BumpTest {
     @Test
