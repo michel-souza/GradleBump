@@ -44,7 +44,6 @@ public class Bump extends DefaultTask {
         try {
             changeVersion(newFile, file);
             saveFile(newFile, file);
-            getGitVersion().commitFile();
         } catch (final Exception e) {
             e.printStackTrace();
         }
@@ -78,10 +77,8 @@ public class Bump extends DefaultTask {
                     Version.valueOf(getGitVersion().versionIncrement(getVersao(), m.group(1), PATTERN_TAG));
                 line = line.replaceFirst("\\d+\\.\\d+\\.\\d+.*", v.toString() + "\"");
             }
-            if (line.matches("ext.snapshotVersion = false")) {
+            if ("snapshot".equalsIgnoreCase(getVersao()) && line.matches("ext.snapshotVersion = false")) {
                 line = line.replaceFirst("false", "true");
-            } else if (line.matches("ext.snapshotVersion = true")) {
-                line = line.replaceFirst("true", "false");
             }
             newFile.add(line);
         }
